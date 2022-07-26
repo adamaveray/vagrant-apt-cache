@@ -57,6 +57,9 @@ Vagrant.configure('2') do |config|
     config.vm.provision 'shell', run: 'always', inline: 'sudo sh -c "service apt-cacher-ng restart || true"'
   end
 
+  # Prevent mounting default Vagrant dir
+  config.vm.synced_folder '.', '/vagrant', disabled: true
+
   # Disable NTP
   config.vm.provision 'shell', inline: 'timedatectl set-ntp false'
 end
