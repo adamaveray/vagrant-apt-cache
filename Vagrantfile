@@ -56,6 +56,14 @@ Vagrant.configure('2') do |config|
 
     # Fix apt-cacher autostart issue
     config.vm.provision 'shell', run: 'always', inline: 'sudo sh -c "service apt-cacher-ng restart || true"'
+
+    # Fix various inconsistencies
+    server.vm.provision 'shell', name: 'Sync clock', run: 'always', inline: <<~SHELL
+      nohup sudo sh -c 'service ntp stop ; ntpd -gq' &
+    SHELL
+    server.vm.provision 'shell', name: 'Fix macOS NFS timeout', run: 'always', inline: <<~SHELL
+      nohup sh -c 'while true; do ls /var/cache/apt-cacher-ng > /dev/null; sleep 30; done' &
+    SHELL
   end
 
   # Prevent mounting default Vagrant dir
